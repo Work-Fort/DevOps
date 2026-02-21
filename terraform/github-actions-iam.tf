@@ -203,7 +203,7 @@ resource "aws_iam_user_policy_attachment" "github_actions_terraform" {
 
 # Output instructions for creating access keys
 output "github_actions_user_instructions" {
-  value = <<-EOT
+  value       = <<-EOT
     To create access keys for GitHub Actions:
     1. aws iam create-access-key --user-name ${aws_iam_user.github_actions.name}
     2. Store the credentials in GitHub Secrets:
