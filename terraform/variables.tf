@@ -7,5 +7,5 @@ variable "aws_region" {
 # forward_to_emails now loaded from SOPS-encrypted secrets.yaml
 # See secrets.tf for SOPS data source
 locals {
-  forward_to_emails = jsondecode(data.sops_file.secrets.raw).forward_to_emails
+  forward_to_emails = data.sops_file.secrets.data["forward_to_emails"]
 }
