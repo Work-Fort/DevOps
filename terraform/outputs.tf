@@ -32,3 +32,30 @@ output "acm_certificate_arn" {
   description = "ACM certificate ARN"
   value       = aws_acm_certificate.workfort.arn
 }
+
+# Website deployment outputs
+output "website_s3_bucket" {
+  description = "S3 bucket name for website hosting"
+  value       = aws_s3_bucket.website.id
+}
+
+output "website_cloudfront_id" {
+  description = "CloudFront distribution ID for www.workfort.dev"
+  value       = aws_cloudfront_distribution.website.id
+}
+
+output "website_cloudfront_domain" {
+  description = "CloudFront domain name for www.workfort.dev"
+  value       = aws_cloudfront_distribution.website.domain_name
+}
+
+output "website_deploy_access_key_id" {
+  description = "IAM access key ID for website deployment"
+  value       = aws_iam_access_key.website_deploy.id
+}
+
+output "website_deploy_secret_key" {
+  description = "IAM secret access key for website deployment"
+  value       = aws_iam_access_key.website_deploy.secret
+  sensitive   = true
+}

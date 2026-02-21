@@ -7,7 +7,10 @@ Infrastructure as Code for the WorkFort project using OpenTofu (Terraform) and A
 - **AWS Account**: WorkFort member account (725245223250) via AWS Organizations
 - **DNS**: Route53 hosted zone for workfort.dev
 - **Email**: SES email receiving + Lambda forwarding to personal email
-- **CDN**: CloudFront for apex redirect (workfort.dev → www.workfort.dev)
+- **CDN**:
+  - CloudFront for apex redirect (workfort.dev → www.workfort.dev)
+  - CloudFront for website hosting (www.workfort.dev)
+- **Website**: S3 bucket with CloudFront OAC for Docusaurus static site
 - **SSL**: ACM certificates for HTTPS
 - **State**: S3 remote backend with DynamoDB locking
 - **Secrets**: SOPS encryption with age keys (encrypted secrets committed to git)
@@ -197,13 +200,17 @@ The `github-actions-terraform` IAM user has scoped permissions for:
 - CloudFront (CDN)
 - SES (email service)
 - Lambda (email forwarding function)
-- S3 (state backend + email storage)
+- S3 (state backend + email storage + website hosting)
 - DynamoDB (state locking)
 
 **This user cannot**:
 - Create/delete IAM users or policies
 - Modify AWS Organizations
 - Access resources outside the WorkFort member account
+
+The `website-deploy` IAM user has scoped permissions for:
+- S3 `workfort-website` bucket (PutObject, GetObject, DeleteObject, ListBucket)
+- CloudFront invalidation for www.workfort.dev distribution
 
 ### Workflow
 
@@ -238,6 +245,34 @@ To add new addresses:
 3. Update `terraform/lambda.tf` recipients list (line 105)
 4. Commit and push
 
+## Website Deployment
+
+The www.workfort.dev website is hosted on S3 with CloudFront CDN. Access credentials are managed through the `website-deploy` IAM user.
+
+### Infrastructure Components
+
+1. **S3 Bucket**: `workfort-website` - private bucket with versioning enabled
+2. **CloudFront Distribution**: Serves www.workfort.dev with HTTPS
+   - Origin Access Control (OAC) for secure S3 access
+   - URL rewriting function for Docusaurus folder structure
+   - Custom error pages (404.html)
+3. **Route53**: A and AAAA records for www.workfort.dev
+4. **IAM User**: `website-deploy` with least-privilege permissions
+
+### Deployment Access
+
+To deploy the website, use the credentials from terraform outputs:
+
+```bash
+cd terraform
+mise exec -- tofu output website_s3_bucket
+mise exec -- tofu output website_cloudfront_id
+mise exec -- tofu output website_deploy_access_key_id
+mise exec -- tofu output -raw website_deploy_secret_key
+```
+
+These credentials are delivered to the marketer for website deployment workflows.
+
 ## Project Structure
 
 ```
@@ -252,8 +287,10 @@ To add new addresses:
 │   ├── secrets.tf                 # SOPS data source for secrets
 │   ├── secrets.yaml               # SOPS-encrypted secrets (COMMITTED)
 │   ├── cloudfront.tf              # Apex redirect via CloudFront
+│   ├── website.tf                 # Website hosting (S3, CloudFront, IAM)
 │   ├── lambda.tf                  # Email forwarding Lambda function
 │   ├── github-actions-iam.tf      # Scoped IAM user for CI/CD
+│   ├── outputs.tf                 # Terraform output values
 │   └── email_forwarder.py         # Lambda function source code
 ├── .mise.toml                     # Tool version pinning
 ├── .sops.yaml                     # SOPS encryption configuration
