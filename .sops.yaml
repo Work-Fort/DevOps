@@ -1,0 +1,6 @@
+# SOPS configuration for WorkFort DevOps
+# Uses age encryption for all files matching the patterns below
+
+creation_rules:
+  - path_regex: secrets\.yaml$
+    age: age1274wude0zk9ws4ud5waf8ef9znwuuwrs42m0fkrevlu9pz74gpxqj7spm0

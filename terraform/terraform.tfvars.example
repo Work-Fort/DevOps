@@ -1,0 +1,8 @@
+# Example terraform.tfvars file
+# Copy this to terraform.tfvars and fill in your values
+# terraform.tfvars is git-ignored and will be stored in encrypted S3 state
+
+forward_to_emails = {
+  admin  = "your-email@example.com"
+  social = "your-email@example.com"
+}

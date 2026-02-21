@@ -1,0 +1,51 @@
+# Sensitive files - NEVER commit unencrypted secrets
+# NOTE: terraform/secrets.yaml IS committed (it's SOPS-encrypted)
+# Only ignore if someone creates an unencrypted backup
+secrets.yaml.dec      # Decrypted secrets backup
+secrets.yaml.bak      # Unencrypted backup
+terraform.tfvars      # Legacy tfvars approach
+.env                  # AWS credentials
+*.pem                 # Private keys
+*.key                 # Private keys
+key.txt               # age private key
+age-key.txt           # age private key
+
+# AWS CLI cache
+.aws/
+
+# Terraform state
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate.d/
+
+# Terraform variable overrides
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Crash logs
+crash.log
+crash.*.log
+
+# CLI config files
+.terraformrc
+terraform.rc
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

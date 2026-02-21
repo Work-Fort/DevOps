@@ -1,0 +1,60 @@
+# DevOps tooling configuration
+
+[tools]
+# AWS CLI via aqua ecosystem
+awscli = "latest"
+# OpenTofu for infrastructure as code
+opentofu = "latest"
+# SOPS for secrets encryption (pinned for reproducibility)
+"aqua:getsops/sops" = "3.11.0"
+# age encryption tool (backend for SOPS, pinned for reproducibility)
+"aqua:FiloSottile/age" = "1.3.1"
+
+[env]
+# AWS configuration will be stored in .env (git-ignored)
+_.file = ".env"
+
+[tasks.fmt]
+description = "Format Terraform code"
+run = "cd terraform && tofu fmt -recursive"
+
+[tasks.validate]
+description = "Validate Terraform configuration"
+run = """
+cd terraform
+tofu init -backend=false
+tofu validate
+"""
+
+[tasks.plan]
+description = "Plan Terraform changes"
+run = """
+cd terraform
+tofu init
+tofu plan -out=tfplan
+"""
+
+[tasks.apply]
+description = "Apply Terraform changes"
+run = """
+cd terraform
+tofu init
+tofu apply -auto-approve tfplan
+"""
+
+[tasks.deploy]
+description = "Full deployment: init, plan, apply"
+run = """
+cd terraform
+tofu init
+tofu plan -no-color -out=tfplan
+tofu apply -auto-approve tfplan
+"""
+
+[tasks.decrypt-secrets]
+description = "Decrypt secrets.yaml for viewing"
+run = "cd terraform && sops --decrypt secrets.yaml"
+
+[tasks.edit-secrets]
+description = "Edit encrypted secrets"
+run = "cd terraform && sops secrets.yaml"

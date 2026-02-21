@@ -1,0 +1,22 @@
+# Terraform/OpenTofu state files
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Variable files that might contain secrets
+*.tfvars
+*.tfvars.json
+
+# Lambda deployment packages
+# *.zip - REMOVED: email_forwarder.zip needs to be committed for GitHub Actions
