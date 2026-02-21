@@ -353,7 +353,7 @@ gh secret list
 
 ## License
 
-Proprietary - WorkFort Project
+GPL-2.0-only - See [LICENSE.md](LICENSE.md) for details
 
 ## Support
 
